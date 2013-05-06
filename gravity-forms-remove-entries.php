@@ -86,12 +86,8 @@ class GFRemove {
     // Page that does the magic
     public static function remove_page()
     {
-        self::log_debug("Starting remove page function");
-
     	?>
 		<style>
-			.remove_col_heading{padding-bottom:2px; border-bottom: 1px solid #ccc; font-weight:bold;}
-			.remove_field_cell {padding: 6px 17px 0 0; margin-right:15px;}
 			.gfield_required{color:red;}
 			
 			.feeds_validation_error{ background-color:#FFDFDF;}
@@ -106,10 +102,13 @@ class GFRemove {
         if(!self::is_gravityforms_supported()){
             die(__(sprintf("Remove Entries Add-On requires Gravity Forms %s. Upgrade automatically on the %sPlugin page%s.", self::$min_gravityforms_version, "<a href='plugins.php'>", "</a>"), "gravity-forms-remove"));
         }
-
-        if (!empty($_POST["gf_remove_form"])){
+        if( isset($_POST['gf_remove_submit']) && empty($_POST["gf_remove_form"]) ){
+        ?>
+            <div class="updated fade" style="padding:6px"><?php _e("Please select a form first.", "gravity-forms-remove") ?></a></div>
+		<?php  
+        } 
+        elseif (!empty($_POST["gf_remove_form"])){
 			
-			self::log_debug("We have some post data.".print_r($_POST, true));
             check_admin_referer("list_action", "gf_remove_survey");
             $form = absint($_POST["gf_remove_form"]);
 			
@@ -130,7 +129,7 @@ class GFRemove {
             <div class="updated fade" style="padding:6px"><?php printf(__("%d entries removed.", "gravity-forms-remove"), $entries) ?> <a href="admin.php?page=gf_entries&view=entries&id=<?php echo $form ?>&filter=trash"><?php _e('Visit your newly trashed entries.', 'gravity-forms-remove') ?></a></div>
             
             <?php
-        }
+        } 
 
         ?>
 		<div class="wrap">
@@ -155,8 +154,6 @@ class GFRemove {
 						<option value="<?php echo absint($form->id) ?>"><?php echo esc_html($form->title) ?></option>
 						<?php endforeach; ?>
 					</select>
-					&nbsp;&nbsp;
-					<img src="<?php echo GFRemove::get_base_url() ?>/images/loading.gif" id="remove_wait" style="display: none;"/>
 				</div>
 
 				<div id="remove_form_type" valign="top" class="margin_vertical_10">
@@ -190,7 +187,6 @@ class GFRemove {
         	jQuery(document).ready(function($){
 	        	$('#date_wrap, #conditional_wrap').hide();
 	        	$('form').on('change','select#gf_remove_type',function(){
-					console.log($(this).val());
 					v = $(this).val();
 					if( v == 'date' ){
 						$('#date_wrap').slideDown();
@@ -259,12 +255,12 @@ class GFRemove {
 
 	private static function date_make_pretty($pre='')
 	{
-		$jj = $_POST[$pre.'jj'];
-		$mm = $_POST[$pre.'mm'];
-		$aa = $_POST[$pre.'aa'];
-		$hh = $_POST[$pre.'hh'];
-		$mn = $_POST[$pre.'mn'];
-		$ss = $_POST[$pre.'ss'];
+		$jj = zeroise(absint($_POST[$pre.'jj']), 2);
+		$mm = zeroise(absint($_POST[$pre.'mm']), 2);
+		$aa = zeroise(absint($_POST[$pre.'aa']), 2);
+		$hh = zeroise(absint($_POST[$pre.'hh']), 2);
+		$mn = zeroise(absint($_POST[$pre.'mn']), 2);
+		$ss = zeroise(absint($_POST[$pre.'ss']), 2);
 		
 		// date_created 2013-02-04 08:19:33
 		return sprintf("%s-%s-%s %s:%s:%s", $aa, $mm, $jj, $hh, $mn, $ss);
