@@ -86,19 +86,6 @@ class GFRemove {
     // Page that does the magic
     public static function remove_page()
     {
-    	?>
-		<style>
-			.gfield_required{color:red;}
-			
-			.feeds_validation_error{ background-color:#FFDFDF;}
-			.feeds_validation_error td{ margin-top:4px; margin-bottom:6px; padding-top:6px; padding-bottom:6px; border-top:1px dotted #C89797; border-bottom:1px dotted #C89797}
-			
-			.left_header{float:left; width:200px;}
-			.margin_vertical_10{margin: 10px 0;}
-			#remove_doubleoptin_warning{padding-left: 5px; padding-bottom:4px; font-size: 10px;}
-			.remove_group_condition{padding-bottom:6px; padding-left:20px;}
-		</style>
-        <?php 
         if(!self::is_gravityforms_supported()){
             die(__(sprintf("Remove Entries Add-On requires Gravity Forms %s. Upgrade automatically on the %sPlugin page%s.", self::$min_gravityforms_version, "<a href='plugins.php'>", "</a>"), "gravity-forms-remove"));
         }
@@ -126,8 +113,17 @@ class GFRemove {
             }
             
             ?>
+	    	<style>
+				.gfield_required{color:red;}
+				.feeds_validation_error{ background-color:#FFDFDF;}
+				.feeds_validation_error td{ margin-top:4px; margin-bottom:6px; padding-top:6px; padding-bottom:6px; border-top:1px dotted #C89797; border-bottom:1px dotted #C89797}
+				.left_header{float:left; width:200px;}
+				.margin_vertical_10{margin: 10px 0;}
+				#remove_doubleoptin_warning{padding-left: 5px; padding-bottom:4px; font-size: 10px;}
+				.remove_group_condition{padding-bottom:6px; padding-left:20px;}
+			</style>
+
             <div class="updated fade" style="padding:6px"><?php printf(__("%d entries removed.", "gravity-forms-remove"), $entries) ?> <a href="admin.php?page=gf_entries&view=entries&id=<?php echo $form ?>&filter=trash"><?php _e('Visit your newly trashed entries.', 'gravity-forms-remove') ?></a></div>
-            
             <?php
         } 
 
@@ -169,11 +165,11 @@ class GFRemove {
 				<div id="date_wrap">
 					<div class="margin_vertical_10">
 						<label for="gf_remove_date_begin" class="left_header"><?php _e("Beginning on", "gravity-forms-remove"); ?> <?php gform_tooltip("remove_gravity_begin") ?></label>
-						<?php GFRemove::time_selection_display('begin') ?>
+						<?php echo GFRemove::time_selection_display('begin') ?>
 					</div>
 					<div class="margin_vertical_10">
 						<label for="gf_remove_date_end" class="left_header"><?php _e("Ending on", "gravity-forms-remove"); ?> <?php gform_tooltip("remove_gravity_end") ?></label>
-						<?php GFRemove::time_selection_display('end') ?>
+						<?php echo GFRemove::time_selection_display('end') ?>
 					</div>
 					<p class="description"><?php _e("To remove all entries before or after a certain date, set the other date value far in the future or past.",'gravity-forms-remove') ?></p>
 				</div>				
@@ -200,7 +196,6 @@ class GFRemove {
 	        	});
         	});
         </script>
-
         <?php 
     }
  
@@ -296,10 +291,11 @@ class GFRemove {
 		$minute = '<input type="text" id="'.$pre.'mn" name="'.$pre.'mn" value="'.$mn.'" size="2" maxlength="2" autocomplete="off" />';
 		$second = '<input type="text" id="'.$pre.'ss" name="'.$pre.'ss" value="'.$ss.'" size="2" maxlength="2" autocomplete="off" />';
 		
-		echo '<div class="gf-timestamp-wrap">';
-		printf(__('%1$s%2$s, %3$s @ %4$s : %5$s : %6$s'), $month, $day, $year, $hour, $minute, $second);
-		echo '</div>';
-
+		$output = '<div class="gf-timestamp-wrap">';
+		$output .= printf(__('%1$s%2$s, %3$s @ %4$s : %5$s : %6$s'), $month, $day, $year, $hour, $minute, $second);
+		$output .='</div>';
+		
+		return $output;
     }
 
 	private static function is_gravityforms_installed(){
@@ -324,6 +320,12 @@ class GFRemove {
 		else
 		    return false;
 	}
+ 
+    public static function add_permissions(){
+        global $wp_roles;
+        $wp_roles->add_cap("administrator", "gravityforms_remove");
+        $wp_roles->add_cap("administrator", "gravityforms_remove_uninstall");
+    }
 	
 	//Returns the url of the plugin's root folder
 	protected function get_base_url(){
