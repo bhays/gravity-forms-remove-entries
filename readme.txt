@@ -4,11 +4,11 @@ Donate link:
 Tags: gravity forms, gravityforms, remove entries, delete entries, remove
 Requires at least: 3.3
 Tested up to: 3.5.1
-Stable tag: 0.1
+Stable tag: 0.3
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
-Remove Gravity Form entries by form and date.
+Remove Gravity Form entries by form or date range.
 
 == Description ==
 
@@ -23,9 +23,26 @@ WordPress plugin for Gravity Forms that allows for easy removal of entries from 
 
 == Frequently asked questions ==
 
+= Why would I want this? =
+
+If you need to remove a large number of entries and removing 20 at a time isn't working, this plugin is for you. Also, if you need to remove entries from a given date range, you can do so.
+
+= Will this delete all my entries? =
+
+No, this only moves entries to the trash. Once in the trash you can permanently delete them or leave them as is.
+
+= Can I delete entries from multiple forms at once? =
+
+No, this only handles one form at a time.
+
+
 == Screenshots ==
 
 == Changelog ==
+
+### 0.3 
+* Fixed AJAX plugin conflicts
+* Added FAQ
 
 ### 0.1
 * Initial release

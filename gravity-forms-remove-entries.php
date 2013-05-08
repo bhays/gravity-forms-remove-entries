@@ -3,7 +3,7 @@
 Plugin Name: Gravity Forms Remove Entries
 Plugin URI: https://github.com/bhays/gravity-forms-remove-entries
 Description: Remove multiple entries from Gravity Forms. Optionally select a timeframe of removals or remove all.
-Version: 0.1
+Version: 0.3
 Author: Ben Hays
 Author URI: http://benhays.com
 
@@ -28,12 +28,17 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 add_action('init',  array('GFRemove', 'init'));
 register_activation_hook( __FILE__, array("GFRemove", "add_permissions"));
 
+add_action('activated_plugin','save_error');
+function save_error(){
+	file_put_contents(ABSPATH. 'wp-content/uploads/error.html', ob_get_contents());
+}
+
 class GFRemove {
 
     private static $path                        = "gravity-forms-remove-entries/gravity-forms-remove-entries.php";
     private static $url                         = "http://www.gravityforms.com";
     private static $slug                        = "gravity-forms-remove-entries";
-    private static $version                     = "0.1";
+    private static $version                     = "0.3";
     private static $min_gravityforms_version    = "1.5";
 
     public static function init(){
@@ -68,15 +73,6 @@ class GFRemove {
             //loading Gravity Forms tooltips
             require_once(GFCommon::get_base_path() . "/tooltips.php");
             add_filter('gform_tooltips', array('GFRemove', 'tooltips'));
-
-         }
-         else if(in_array(RG_CURRENT_PAGE, array("admin-ajax.php"))){
-
-            //loading data class
-            require_once(self::get_base_path() . "/inc/data.php");
-
-            add_action('wp_ajax_rg_update_feed_active', array('GFRemove', 'update_feed_active'));
-            add_action('wp_ajax_gf_select_remove_form', array('GFRemove', 'select_remove_form'));
 
         } else {
 	        // Nothing else, it's all in the admin

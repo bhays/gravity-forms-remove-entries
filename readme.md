@@ -1,7 +1,7 @@
 Gravity Forms Remove Entries
 ============================
 
-Version 0.1
+Version 0.3
 
 WordPress plugin for Gravity Forms that allows for easy removal of entries from forms. Remove all entires or entries specified by a date range.
 
@@ -20,6 +20,10 @@ WordPress plugin for Gravity Forms that allows for easy removal of entries from 
 4. Navigate to Forms->Remove Entries to select your form and remove the entries
 
 ## Changelog
+
+### 0.3 
+* Fixed AJAX plugin conflicts
+* Added FAQ
 
 ### 0.1
 * Initial release
