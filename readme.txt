@@ -1,10 +1,10 @@
 === Gravity Forms Remove Entries ===
 Contributors: benhays
-Donate link: 
+Donate link:
 Tags: gravity forms, gravityforms, remove entries, delete entries, remove
 Requires at least: 3.3
-Tested up to: 3.5.1
-Stable tag: 0.3.1
+Tested up to: 4.4.2
+Stable tag: 0.3.2
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -40,7 +40,10 @@ No, this only handles one form at a time.
 
 == Changelog ==
 
-### 0.3 
+### 0.3.2
+* Fix members_get_capabilities filter
+
+### 0.3
 * Fixed AJAX plugin conflicts
 * Added FAQ
 

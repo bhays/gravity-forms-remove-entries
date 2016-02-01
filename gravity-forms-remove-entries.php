@@ -3,12 +3,12 @@
 Plugin Name: Gravity Forms Remove Entries
 Plugin URI: https://github.com/bhays/gravity-forms-remove-entries
 Description: Remove multiple entries from Gravity Forms. Optionally select a timeframe of removals or remove all.
-Version: 0.3.1
+Version: 0.3.2
 Author: Ben Hays
 Author URI: http://benhays.com
 
 ------------------------------------------------------------------------
-Copyright 2013 Ben Hays
+Copyright 2016 Ben Hays
 
 This program is free software; you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -33,7 +33,7 @@ class GFRemove {
     private static $path                        = "gravity-forms-remove-entries/gravity-forms-remove-entries.php";
     private static $url                         = "http://www.gravityforms.com";
     private static $slug                        = "gravity-forms-remove-entries";
-    private static $version                     = "0.3";
+    private static $version                     = "0.3.2";
     private static $min_gravityforms_version    = "1.5";
 
     public static function init(){
@@ -44,7 +44,7 @@ class GFRemove {
             //loading translations
             load_plugin_textdomain('gravity-forms-remove-entires', FALSE, '/gravity-forms-remove-entires/languages' );
         }
-        
+
         if(!self::is_gravityforms_supported()){
            return;
         }
@@ -57,8 +57,9 @@ class GFRemove {
         }
 
         //integrating with Members plugin
-        if(function_exists('members_get_capabilities'))
-            add_filter('members_get_capabilities', array("GFRemove", "members_get_capabilities"));
+		if(function_exists('members_get_capabilities')){
+			add_filter('members_get_capabilities', array("GFRemove", "members_get_capabilities"));
+		}
 
         //creates the subnav left menu
         add_filter("gform_addon_navigation", array('GFRemove', 'create_menu'));
@@ -73,7 +74,7 @@ class GFRemove {
 	        // Nothing else, it's all in the admin
 		}
     }
-    
+
     // Page that does the magic
     public static function remove_page()
     {
@@ -83,13 +84,13 @@ class GFRemove {
         if( isset($_POST['gf_remove_submit']) && empty($_POST["gf_remove_form"]) ){
         ?>
             <div class="updated fade" style="padding:6px"><?php _e("Please select a form first.", "gravity-forms-remove") ?></a></div>
-		<?php  
-        } 
+		<?php
+        }
         elseif (!empty($_POST["gf_remove_form"])){
-			
+
             check_admin_referer("list_action", "gf_remove_survey");
             $form = absint($_POST["gf_remove_form"]);
-			
+
 			if( $_POST['gf_remove_type'] == 'date' )
 			{
 				$entries = self::remove_entries_by_date($form, self::date_make_pretty('begin'), self::date_make_pretty('end'));
@@ -100,9 +101,9 @@ class GFRemove {
 			}
             if( !$entries )
             {
-	            self::log_debug("Remove all entries returned false");            
+	            self::log_debug("Remove all entries returned false");
             }
-            
+
             ?>
 	    	<style>
 				.gfield_required{color:red;}
@@ -116,22 +117,22 @@ class GFRemove {
 
             <div class="updated fade" style="padding:6px"><?php printf(__("%d entries removed.", "gravity-forms-remove"), $entries) ?> <a href="admin.php?page=gf_entries&view=entries&id=<?php echo $form ?>&filter=trash"><?php _e('Visit your newly trashed entries.', 'gravity-forms-remove') ?></a></div>
             <?php
-        } 
+        }
 
         ?>
 		<div class="wrap">
-			
+
 			<h2><?php _e("Remove Entries", "gravity-forms-remove"); ?></h2>
 			<p><?php _e("Selecting a form and hitting 'Remove Entires' will mark entries as trashed. Entries will not be completely removed, this can be done via remove all in the trash.",'gravity-forms-remove') ?></p>
 			<form id="remove_entries_form" method="post">
                 <?php wp_nonce_field('list_action', 'gf_remove_survey') ?>
                 <input type="hidden" id="action" name="action"/>
                 <input type="hidden" id="action_argument" name="action_argument"/>
-				
+
 				<div id="remove_form_container" valign="top" class="margin_vertical_10">
-				
+
 					<label for="gf_remove_form" class="left_header"><?php _e("Gravity Form", "gravity-forms-remove"); ?> <?php gform_tooltip("remove_gravity_form") ?></label>
-					
+
 					<select id="gf_remove_form" name="gf_remove_form">
 						<option value=""><?php _e("Select a form", "gravity-forms-remove"); ?> </option>
 						<?php
@@ -144,9 +145,9 @@ class GFRemove {
 				</div>
 
 				<div id="remove_form_type" valign="top" class="margin_vertical_10">
-				
+
 					<label for="gf_remove_type" class="left_header"><?php _e("Remove which entries?", "gravity-forms-remove"); ?> <?php gform_tooltip("remove_gravity_type") ?></label>
-					
+
 					<select id="gf_remove_type" name="gf_remove_type">
 						<option value="all">All Entries</option>
 						<option value="date">By Date</option>
@@ -163,7 +164,7 @@ class GFRemove {
 						<?php echo GFRemove::time_selection_display('end') ?>
 					</div>
 					<p class="description"><?php _e("To remove all entries before or after a certain date, set the other date value far in the future or past.",'gravity-forms-remove') ?></p>
-				</div>				
+				</div>
 				<div id="remove_submit_container" class="margin_vertical_10">
 					<input type="submit" name="gf_remove_submit" value="<?php _e("Remove Entries", "gravity-forms-remove") ?>" class="button-primary"/>
 				</div>
@@ -180,16 +181,16 @@ class GFRemove {
 						$('#conditional_wrap').hide();
 					} else if( v == 'conditional' ) {
 						$('#conditional_wrap').slideDown();
-						$('#date_wrap').hide();			        	
+						$('#date_wrap').hide();
 					} else {
 						$('#date_wrap, #conditional_wrap').hide();
 					}
 	        	});
         	});
         </script>
-        <?php 
+        <?php
     }
- 
+
 	//Adds feed tooltips to the list of tooltips
 	public static function tooltips($tooltips){
 		$remove_tooltips = array(
@@ -201,7 +202,7 @@ class GFRemove {
 		);
 		return array_merge($tooltips, $remove_tooltips);
 	}
-    
+
     //Creates Remove Entries left nav menu under Forms
     public static function create_menu($menus)
     {
@@ -220,10 +221,10 @@ class GFRemove {
 		$form_table_name = RGFormsModel::get_lead_table_name();
 	    $data = array('status' => 'trash');
 	    $where = array('form_id' => $form);
-	    
+
 		return $wpdb->update($form_table_name, $data, $where, '%s', '%d');
     }
-    
+
     private static function remove_entries_by_date($form, $begin, $end)
     {
 		global $wpdb;
@@ -235,7 +236,7 @@ class GFRemove {
 	private static function is_remove_page(){
 		$current_page = trim(strtolower(rgget("page")));
 		$remove_pages = array("gf_remove");
-		
+
 		return in_array($current_page, $remove_pages);
 	}
 
@@ -247,24 +248,24 @@ class GFRemove {
 		$hh = zeroise(absint($_POST[$pre.'hh']), 2);
 		$mn = zeroise(absint($_POST[$pre.'mn']), 2);
 		$ss = zeroise(absint($_POST[$pre.'ss']), 2);
-		
+
 		// date_created 2013-02-04 08:19:33
 		return sprintf("%s-%s-%s %s:%s:%s", $aa, $mm, $jj, $hh, $mn, $ss);
-		
+
 	}
     private static function time_selection_display($pre = '')
-    {	
+    {
     	global $wp_locale;
 
 		$time_adj = current_time('timestamp');
-		
+
 		$jj = gmdate( 'd', $time_adj );
 		$mm = gmdate( 'm', $time_adj );
 		$aa = gmdate( 'Y', $time_adj );
 		$hh = gmdate( 'H', $time_adj );
 		$mn = gmdate( 'i', $time_adj );
 		$ss = gmdate( 's', $time_adj );
-		
+
 		$month = '<select id="'.$pre.'mm" name="'.$pre.'mm" >'."\n";
 		for ( $i = 1; $i < 13; $i = $i +1 ) {
 			$monthnum = zeroise($i, 2);
@@ -275,24 +276,24 @@ class GFRemove {
 			$month .= '>'.sprintf( __( '%1$s-%2$s' ), $monthnum, $wp_locale->get_month_abbrev( $wp_locale->get_month( $i ) ) )."</option>\n";
 		}
 		$month .= '</select>';
-		
+
 		$day = '<input type="text" id="'.$pre.'jj" name="'.$pre.'jj" value="'.$jj.'" size="2" maxlength="2" autocomplete="off" />';
 		$year = '<input type="text" id="'.$pre.'aa" name="'.$pre.'aa" value="'.$aa.'" size="4" maxlength="4" autocomplete="off" />';
 		$hour = '<input type="text" id="'.$pre.'hh" name="'.$pre.'hh" value="'.$hh.'" size="2" maxlength="2" autocomplete="off" />';
 		$minute = '<input type="text" id="'.$pre.'mn" name="'.$pre.'mn" value="'.$mn.'" size="2" maxlength="2" autocomplete="off" />';
 		$second = '<input type="text" id="'.$pre.'ss" name="'.$pre.'ss" value="'.$ss.'" size="2" maxlength="2" autocomplete="off" />';
-		
+
 		$output = '<div class="gf-timestamp-wrap">';
 		$output .= printf(__('%1$s%2$s, %3$s @ %4$s : %5$s : %6$s'), $month, $day, $year, $hour, $minute, $second);
 		$output .='</div>';
-		
+
 		return $output;
     }
 
 	private static function is_gravityforms_installed(){
 		return class_exists("RGForms");
 	}
-	
+
 	private static function is_gravityforms_supported(){
 		if(class_exists("GFCommon")){
 		    $is_correct_version = version_compare(GFCommon::$version, self::$min_gravityforms_version, ">=");
@@ -302,7 +303,7 @@ class GFRemove {
 		    return false;
 		}
 	}
-	
+
 	protected static function has_access($required_permission){
 		$has_members_plugin = function_exists('members_get_capabilities');
 		$has_access = $has_members_plugin ? current_user_can($required_permission) : current_user_can("level_7");
@@ -311,30 +312,30 @@ class GFRemove {
 		else
 		    return false;
 	}
- 
+
     public static function add_permissions(){
         global $wp_roles;
         $wp_roles->add_cap("administrator", "gravityforms_remove");
         $wp_roles->add_cap("administrator", "gravityforms_remove_uninstall");
     }
-	
+
 	//Returns the url of the plugin's root folder
 	protected function get_base_url(){
 		return plugins_url(null, __FILE__);
 	}
-	
+
 	//Returns the physical path of the plugin's root folder
 	protected function get_base_path(){
 		$folder = basename(dirname(__FILE__));
 		return WP_PLUGIN_DIR . "/" . $folder;
 	}
-	
+
 	function set_logging_supported($plugins)
 	{
 		$plugins[self::$slug] = "Remove Entries";
 		return $plugins;
 	}
-	
+
 	private static function log_error($message){
 		if(class_exists("GFLogging"))
 		{
@@ -342,7 +343,7 @@ class GFRemove {
 			GFLogging::log_message(self::$slug, $message, KLogger::ERROR);
 		}
 	}
-	
+
 	private static function log_debug($message){
 		if(class_exists("GFLogging"))
 		{
@@ -356,10 +357,10 @@ if(!function_exists("rgget")){
 function rgget($name, $array=null){
 	if(!isset($array))
 		$array = $_GET;
-	
+
 	if(isset($array[$name]))
 		return $array[$name];
-	
+
 	return "";
 }
 }
@@ -368,7 +369,7 @@ if(!function_exists("rgpost")){
 function rgpost($name, $do_stripslashes=true){
 	if(isset($_POST[$name]))
 		return $do_stripslashes ? stripslashes_deep($_POST[$name]) : $_POST[$name];
-	
+
 	return "";
 }
 }
@@ -377,7 +378,7 @@ if(!function_exists("rgar")){
 function rgar($array, $name){
 	if(isset($array[$name]))
 		return $array[$name];
-	
+
 	return '';
 }
 }
@@ -386,7 +387,7 @@ if(!function_exists("rgempty")){
 function rgempty($name, $array = null){
 	if(!$array)
 		$array = $_POST;
-	
+
 	$val = rgget($name, $array);
 	return empty($val);
 }
