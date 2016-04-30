@@ -3,7 +3,7 @@
 Plugin Name: Gravity Forms Remove Entries
 Plugin URI: https://github.com/bhays/gravity-forms-remove-entries
 Description: Remove multiple entries from Gravity Forms. Optionally select a timeframe of removals or remove all.
-Version: 0.3.2
+Version: 0.3.3
 Author: Ben Hays
 Author URI: http://benhays.com
 
@@ -33,7 +33,7 @@ class GFRemove {
     private static $path                        = "gravity-forms-remove-entries/gravity-forms-remove-entries.php";
     private static $url                         = "http://www.gravityforms.com";
     private static $slug                        = "gravity-forms-remove-entries";
-    private static $version                     = "0.3.2";
+    private static $version                     = "0.3.3";
     private static $min_gravityforms_version    = "1.5";
 
     public static function init(){
