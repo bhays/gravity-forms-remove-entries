@@ -58,7 +58,8 @@ class GFRemove {
 
         //integrating with Members plugin
 		if(function_exists('members_get_capabilities')){
-			add_filter('members_get_capabilities', array("GFRemove", "members_get_capabilities"));
+			add_filter('plugin_name_capability', array("GFRemove", "gf_remove_get_capabilities"));
+			add_filter('members_get_capabilities', array("GFRemove", "gf_remove_extra_caps"));
 		}
 
         //creates the subnav left menu
@@ -74,6 +75,16 @@ class GFRemove {
 	        // Nothing else, it's all in the admin
 		}
     }
+
+    // Return member role capability
+    public static function gf_remove_get_capabilities(){
+	    return 'gravity_forms_remove_entries';
+    }
+
+	public static function gf_remove_extra_caps( $caps ) {
+		$caps[] = 'gravity_forms_remove_entries';
+		return $caps;
+	}
 
     // Page that does the magic
     public static function remove_page()
