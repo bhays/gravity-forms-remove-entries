@@ -3,12 +3,12 @@
 Plugin Name: Gravity Forms Remove Entries
 Plugin URI: https://github.com/bhays/gravity-forms-remove-entries
 Description: Remove multiple entries from Gravity Forms. Optionally select a timeframe of removals or remove all.
-Version: 0.3.3
+Version: 0.4
 Author: Ben Hays
 Author URI: http://benhays.com
 
 ------------------------------------------------------------------------
-Copyright 2016 Ben Hays
+Copyright 2018 Ben Hays
 
 This program is free software; you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
