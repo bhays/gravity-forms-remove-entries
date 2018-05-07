@@ -3,8 +3,8 @@ Contributors: benhays
 Donate link:
 Tags: gravity forms, gravityforms, remove entries, delete entries, remove
 Requires at least: 3.3
-Tested up to: 4.9.2
-Stable tag: 0.4
+Tested up to: 4.9.5
+Stable tag: 0.5
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -39,6 +39,9 @@ No, this only handles one form at a time.
 == Screenshots ==
 
 == Changelog ==
+
+### 0.5
+* Update for Gravity Forms v2.3 database storage structures
 
 ### 0.4
 * Fix from @zackkatz for Gravity View compatibility

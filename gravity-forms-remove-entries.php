@@ -3,7 +3,7 @@
 Plugin Name: Gravity Forms Remove Entries
 Plugin URI: https://github.com/bhays/gravity-forms-remove-entries
 Description: Remove multiple entries from Gravity Forms. Optionally select a timeframe of removals or remove all.
-Version: 0.4
+Version: 0.5
 Author: Ben Hays
 Author URI: http://benhays.com
 
@@ -229,17 +229,21 @@ class GFRemove {
     private static function remove_all_entries($form)
     {
 		global $wpdb;
-		$form_table_name = RGFormsModel::get_lead_table_name();
+		$form_table_name = version_compare( RGFormsModel::get_database_version(), '2.3-dev-1', '<' ) ? RGFormsModel::get_lead_table_name() : RGFormsModel::get_entry_table_name();
+
 	    $data = array('status' => 'trash');
 	    $where = array('form_id' => $form);
 
-		return $wpdb->update($form_table_name, $data, $where, '%s', '%d');
+		$update = $wpdb->update($form_table_name, $data, $where, '%s', '%d');
+
+		return $update;
     }
 
     private static function remove_entries_by_date($form, $begin, $end)
     {
 		global $wpdb;
-		$form_table_name = RGFormsModel::get_lead_table_name();
+		$form_table_name = version_compare( RGFormsModel::get_database_version(), '2.3-dev-1', '<' ) ? RGFormsModel::get_lead_table_name() : RGFormsModel::get_entry_table_name();
+
 	    $sql = "UPDATE $form_table_name SET status = 'trash' WHERE form_id = '$form' AND date_created > '$begin' AND date_created < '$end'";
 	    return $wpdb->query($sql);
     }
